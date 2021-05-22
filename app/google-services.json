@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "168663906109",
+    "firebase_url": "https://atm-test-3f3bf-default-rtdb.firebaseio.com",
+    "project_id": "atm-test-3f3bf",
+    "storage_bucket": "atm-test-3f3bf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:168663906109:android:4cbc6cc97c8c9930f43754",
+        "android_client_info": {
+          "package_name": "com.tom.atm2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "168663906109-n7nho8v96l4vv8qpgmuumuq9agmg6o3r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9bZQQ0VY7VNwIQkrvFJz-_ho2VJ8yW7Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "168663906109-n7nho8v96l4vv8qpgmuumuq9agmg6o3r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
