@@ -13,8 +13,17 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 //import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import static android.content.ContentValues.TAG;
 
 public class LoginActivity extends Activity {
 
@@ -60,7 +69,30 @@ public class LoginActivity extends Activity {
 
         String userid = edUserid.getText().toString();
         String passwd = edPasswd.getText().toString();
-        String username = "jack";
+        FirebaseDatabase.getInstance().getReference("users").child(userid).child("password")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        String pw = snapshot.getValue().toString();
+                        if (pw.equals(passwd)) {
+                            setResult(RESULT_OK);
+                            finish();
+                        } else {
+                            new AlertDialog.Builder(LoginActivity.this)
+                                    .setTitle("LOGIN")
+                                    .setMessage("LOGIN FAILED")
+                                    .setPositiveButton("OK", null)
+                                    .show();
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+
+                    }
+                });
+        /*String username = "jack";
         String passcode = "1234";
 
         if (username.equals(userid)&&passcode.equals(passwd)){
@@ -72,7 +104,7 @@ public class LoginActivity extends Activity {
                     .setMessage("LOGIN FAILED")
                     .setPositiveButton("OK",null)
                     .show();
-        }
+        }*/
 
     }
 
