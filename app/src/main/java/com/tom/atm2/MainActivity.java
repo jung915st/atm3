@@ -20,6 +20,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 //import android.widget.Toolbar;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
@@ -47,34 +51,62 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar2 = (Toolbar) findViewById(R.id.toolbar2);
         //setActionBar(toolbar);
         setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar2);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show());
         //
         if (!logon) {
-            Intent intent = new Intent(this,LoginActivity.class);
-            startActivityForResult(intent,REQUEST_LOGIN);
+            ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == Activity.RESULT_CANCELED) {
+                            // There are no request code
+                            //Intent data = result.getData();
+                            //doSomeOperations();
+                            finish();
+                        }
+                    });
+            Intent intent = new Intent(this, LoginActivity.class);
+            activityResultLauncher.launch(intent);
+            //Intent intent = new Intent(this,LoginActivity.class);
+            //startActivityForResult(intent,REQUEST_LOGIN);//deprecated
         }
         setRecyclerView();
+    }
+    /* startActivityForResult is deprecated
+    public void openActivityForResult() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        activityResultLauncher.launch(intent);
+    }
+
+     */
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //do operations
+        if (requestCode == REQUEST_LOGIN) {
+            if (resultCode != RESULT_OK) {
+                finish();
+            }
+        }
+        //
     }
 
     private void setRecyclerView() {
         RecyclerView recyclerView = findViewById(R.id.recycler);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(this,3));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         String[] funcs = getResources().getStringArray(R.array.functions);
         functions = new ArrayList<>();
-        functions.add(new Function(funcs[0],R.drawable.func_transaction));
-        functions.add(new Function(funcs[1],R.drawable.func_balance));
-        functions.add(new Function(funcs[2],R.drawable.func_finance));
+        functions.add(new Function(funcs[0], R.drawable.func_transaction));
+        functions.add(new Function(funcs[1], R.drawable.func_balance));
+        functions.add(new Function(funcs[2], R.drawable.func_finance));
         functions.add(new Function(funcs[3],R.drawable.func_contacts));
         functions.add(new Function(funcs[4],R.drawable.func_exit));
         IconAdapter adapter = new IconAdapter();
@@ -140,15 +172,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_LOGIN) {
-            if (resultCode != RESULT_OK) {
-                finish();
-            }
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

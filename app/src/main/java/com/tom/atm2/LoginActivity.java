@@ -15,6 +15,9 @@ import androidx.core.content.ContextCompat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.google.firebase.FirebaseApp;
@@ -30,6 +33,7 @@ public class LoginActivity extends Activity {
     private static final int REQUEST_CODE_CAMERA = 5;
     private EditText edUserid;
     private EditText edPasswd;
+    private CheckBox cbRemeber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +41,7 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
         int permisson = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
         if (permisson == PackageManager.PERMISSION_GRANTED) {
-            takePhoto();
+            //takePhoto();
         } else {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.CAMERA}, REQUEST_CODE_CAMERA);
@@ -45,6 +49,15 @@ public class LoginActivity extends Activity {
 
         edUserid = findViewById(R.id.userid);
         edPasswd = findViewById(R.id.passwd);
+        cbRemeber = findViewById(R.id.cb_rem_userid);
+        cbRemeber.setChecked(getSharedPreferences("atm3", MODE_PRIVATE)
+                .getBoolean("REMEMBER_USERID", false));
+        cbRemeber.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            getSharedPreferences("atm3", MODE_PRIVATE)
+                    .edit().putBoolean("REMEMBER_USERID", isChecked)
+                    .apply();
+
+        });
 
 
     }
@@ -55,7 +68,10 @@ public class LoginActivity extends Activity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE_CAMERA) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //takePhoto();//test for permission
+                takePhoto();//test for permission
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CAMERA}, REQUEST_CODE_CAMERA);
             }
         }
     }
@@ -75,6 +91,13 @@ public class LoginActivity extends Activity {
                     public void onDataChange(DataSnapshot snapshot) {
                         String pw = snapshot.getValue().toString();
                         if (pw.equals(passwd)) {
+                            boolean remember = getSharedPreferences("atm3", MODE_PRIVATE)
+                                    .getBoolean("REMEMBER_USERID", false);
+                            if (remember) {
+                                getSharedPreferences("atm3", MODE_PRIVATE)
+                                        .edit().putString("USERID", userid)
+                                        .apply();
+                            }
                             setResult(RESULT_OK);
                             finish();
                         } else {
@@ -108,7 +131,8 @@ public class LoginActivity extends Activity {
 
     }
 
-    public void cancel (View view) {
+    public void cancel(View view) {
 
     }
+
 }
